@@ -5,6 +5,10 @@ const level2 = document.getElementById("lvl2");
 const level3 = document.getElementById("lvl3");
 const playAgain = document.getElementById("playAgain");
 const menu = document.getElementById("menu");
+let chrono;
+let tempsRestant = 60;
+let coups = 0;
+const maxCoups = 20;
 playAgain.style.visibility = "hidden";
 menu.style.visibility = "hidden";
 
@@ -131,7 +135,31 @@ function afficheTableau(tablegame) {
     }
 }
 
+function démarrerTimer() {
+    clearInterval(chrono);
+    tempsRestant = 60;
+    document.getElementById("timer").textContent = `⏱ Temps : ${tempsRestant}`;
 
+    chrono = setInterval(() => {
+        tempsRestant--;
+        document.getElementById("timer").textContent = `⏱ Temps : ${tempsRestant}`;
+        if (tempsRestant === 0) {
+            clearInterval(chrono);
+            alert("⏰ Temps écoulé !");
+            playAgain.style.display = "block";
+        }
+    }, 1000);
+}
+
+function incrementerCoups() {
+    coups++;
+    document.getElementById("coups").textContent = `👣 Coups : ${coups}`;
+    if (coups >= maxCoups) {
+        clearInterval(chrono);
+        alert("😵 T'as épuisé tous tes coups !");
+        playAgain.style.display = "block";
+    }
+}
 
 level1.addEventListener("click", () => {
     indexlvl.style.visibility = "hidden";
@@ -144,6 +172,7 @@ level2.addEventListener("click", () => {
     indexlvl.style.visibility = "hidden";
     const affichelvl2 = mélangeur(4, 3);
     afficheTableau(affichelvl2);
+    démarrerTimer(level2);
 
 });
 
@@ -153,3 +182,6 @@ level3.addEventListener("click", () => {
     afficheTableau(affichelvl3);
 
 });
+
+
+
