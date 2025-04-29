@@ -5,58 +5,56 @@ const level2 = document.getElementById("lvl2");
 const level3 = document.getElementById("lvl3");
 const playAgain = document.getElementById("playAgain");
 const menu = document.getElementById("menu");
-let chrono;
-let tempsRestant = 60;
-let coups = 0;
-const maxCoups = 20;
-playAgain.style.visibility = "hidden";
-menu.style.visibility = "hidden";
+const timerDisplay = document.getElementById("timer");
+const coupsDisplay = document.getElementById("coups");
 
+// Variables de jeu
+let chrono;
 let carteUp = [];
 let pairefound = 0;
 let totalPaire = 0;
+let gameMode = null;
+let coups = 0;
+
+const maxCoups = 15;
+const baseTime = 30;
+
 const imgcard = [
-    "kero.png",
-    "tamama.png",
-    "giroro.PNG",
-    "kururu.PNG",
-    "dororo.PNG",
-    "bad giroro.PNG"
+    "kero.png", "tamama.png", "giroro.PNG",
+    "kururu.PNG", "dororo.PNG", "bad giroro.PNG"
 ];
+
+// Init UI
+playAgain.style.visibility = "hidden";
+menu.style.visibility = "hidden";
 
 function mélangeur(lignes, colonnes) {
     const totalCard = lignes * colonnes;
     totalPaire = totalCard / 2;
-    if (totalCard % 2 !== 0) {
-        throw new Error("Le nombre total de cartes doit être pair.");
-    }
+    if (totalCard % 2 !== 0) throw new Error("Nombre de cartes impair.");
 
     const cartes = [...imgcard, ...imgcard].slice(0, totalCard);
-
     for (let i = cartes.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [cartes[i], cartes[j]] = [cartes[j], cartes[i]];
     }
 
     const tablegame = [];
-    let index = 0;
-    for (let i = 0; i < lignes; i++) {
-        const ligne = [];
+    for (let i = 0, index = 0; i < lignes; i++) {
+        tablegame[i] = [];
         for (let j = 0; j < colonnes; j++) {
-            ligne.push(cartes[index++]);
+            tablegame[i][j] = cartes[index++];
         }
-        tablegame.push(ligne);
     }
-
     return tablegame;
 }
 
 function afficheTableau(tablegame) {
     contnerGame.innerHTML = "";
     contnerGame.style.display = "grid";
+    contnerGame.style.gridTemplateColumns = `repeat(${tablegame[0].length}, 5em)`;
     contnerGame.style.justifyContent = "center";
     contnerGame.style.gap = "10px";
-    contnerGame.style.gridTemplateColumns = `repeat(${tablegame[0].length}, 5em)`;
 
     for (let i = 0; i < tablegame.length; i++) {
         for (let j = 0; j < tablegame[i].length; j++) {
@@ -77,6 +75,8 @@ function afficheTableau(tablegame) {
                     carteUp.push({ i, j, img, btn });
 
                     if (carteUp.length === 2) {
+                        if (gameMode === "level3") incrementerCoups();
+
                         setTimeout(() => {
                             const [c1, c2] = carteUp;
                             const name1 = tablegame[c1.i][c1.j];
@@ -86,43 +86,18 @@ function afficheTableau(tablegame) {
                                 c1.btn.style.visibility = "hidden";
                                 c2.btn.style.visibility = "hidden";
                                 pairefound++;
-                                console.log(pairefound)
 
-                                if (totalPaire === pairefound) {
+                                if (pairefound === totalPaire) {
+                                    if (gameMode === "level2") clearInterval(chrono);
                                     setTimeout(() => {
-                                        alert("🎉 Kero ! Tu as trouvé toutes les paires !")
+                                        alert("🎉 Kero ! Tu as trouvé toutes les paires !");
+                                        showEndButtons();
                                     }, 200);
-
-                                    setTimeout(() => {
-                                        playAgain.style.visibility = "visible";
-                                        menu.style.visibility = "visible";
-                                    }, 200);
-                                    menu.addEventListener("click", () => {
-                                        contnerGame.innerHTML = "";
-                                        carteUp = [];
-                                        pairefound = 0;
-                                        indexlvl.style.visibility = "visible";
-                                        menu.style.visibility = "hidder";
-                                    })
-                                    playAgain.addEventListener("click", () => {
-                                        playAgain.style.display = "none";
-                                        const newGame = mélangeur(4, 3);
-                                        afficheTableau(newGame);
-
-
-                                    })
-
-                                        ;
-
-
-
                                 }
-
                             } else {
                                 c1.img.src = 'assets/logo.png';
                                 c2.img.src = 'assets/logo.png';
                             }
-
 
                             carteUp = [];
                         }, 800);
@@ -137,51 +112,84 @@ function afficheTableau(tablegame) {
 
 function démarrerTimer() {
     clearInterval(chrono);
-    tempsRestant = 60;
-    document.getElementById("timer").textContent = `⏱ Temps : ${tempsRestant}`;
+    let tempsRestant = baseTime;
+    timerDisplay.textContent = `⏱ Temps : ${tempsRestant}`;
 
     chrono = setInterval(() => {
         tempsRestant--;
-        document.getElementById("timer").textContent = `⏱ Temps : ${tempsRestant}`;
-        if (tempsRestant === 0) {
+        timerDisplay.textContent = `⏱ Temps : ${tempsRestant}`;
+        if (tempsRestant <= 0) {
             clearInterval(chrono);
             alert("⏰ Temps écoulé !");
-            playAgain.style.display = "block";
+            showEndButtons();
         }
     }, 1000);
 }
 
 function incrementerCoups() {
     coups++;
-    document.getElementById("coups").textContent = `👣 Coups : ${coups}`;
+    coupsDisplay.textContent = `👣 Coups : ${coups}`;
     if (coups >= maxCoups) {
-        clearInterval(chrono);
         alert("😵 T'as épuisé tous tes coups !");
-        playAgain.style.display = "block";
+        showEndButtons();
     }
 }
 
+function resetGame() {
+    carteUp = [];
+    pairefound = 0;
+    coups = 0;
+    coupsDisplay.textContent = gameMode === "level3" ? "👣 Coups : 0" : "";
+    timerDisplay.textContent = gameMode === "level2" ? `⏱ Temps : ${baseTime}` : "";
+    clearInterval(chrono);
+    playAgain.style.visibility = "hidden";
+    menu.style.visibility = "hidden";
+}
+
+function showEndButtons() {
+    clearInterval(chrono);
+    playAgain.style.visibility = "visible";
+    menu.style.visibility = "visible";
+}
+
+// --- Gestion des niveaux ---
 level1.addEventListener("click", () => {
     indexlvl.style.visibility = "hidden";
-    const affichelvl1 = mélangeur(4, 3);
-    afficheTableau(affichelvl1);
-
+    timerDisplay.style.display = "none";
+    coupsDisplay.style.display = "none";
+    gameMode = "level1";
+    resetGame();
+    afficheTableau(mélangeur(4, 3));
 });
 
 level2.addEventListener("click", () => {
     indexlvl.style.visibility = "hidden";
-    const affichelvl2 = mélangeur(4, 3);
-    afficheTableau(affichelvl2);
-    démarrerTimer(level2);
-
+    coupsDisplay.style.display = "none";
+    gameMode = "level2";
+    resetGame();
+    afficheTableau(mélangeur(4, 3));
+    démarrerTimer(); // Timer activé uniquement ici
 });
 
 level3.addEventListener("click", () => {
     indexlvl.style.visibility = "hidden";
-    const affichelvl3 = mélangeur(4, 3);
-    afficheTableau(affichelvl3);
-
+    timerDisplay.style.display = "none";
+    gameMode = "level3";
+    resetGame();
+    afficheTableau(mélangeur(4, 3));
+    // Pas de timer ici
 });
 
+// --- Boutons menu et rejouer ---
+menu.addEventListener("click", () => {
+    contnerGame.innerHTML = "";
+    indexlvl.style.visibility = "visible";
+    resetGame();
+});
 
-
+playAgain.addEventListener("click", () => {
+    resetGame();
+    const newGame = mélangeur(4, 3);
+    afficheTableau(newGame);
+    if (gameMode === "level2") démarrerTimer();
+});

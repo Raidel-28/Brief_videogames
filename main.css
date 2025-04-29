@@ -1,0 +1,109 @@
+/* Reset simple */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Comic Sans MS", "Arial", sans-serif;
+}
+
+/* Fond général inspiré de Keroro */
+body {
+    background: linear-gradient(135deg, #b0ffb3, #e0ffe0);
+    color: #004400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Titre et interface */
+h1 {
+    font-size: 2.5rem;
+    color: #228833;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px white;
+}
+
+/* Niveau */
+#indexlvl {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+#indexlvl button {
+    background-color: #66cc66;
+    border: 2px solid #004400;
+    border-radius: 12px;
+    padding: 0.8em 1.5em;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+#indexlvl button:hover {
+    transform: scale(1.1);
+    background-color: #55aa55;
+}
+
+/* Plateau de jeu */
+#gamecenter {
+    margin-top: 2rem;
+}
+
+/* Cartes */
+#gamecenter button {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+#gamecenter button:hover {
+    transform: scale(1.05);
+}
+
+#gamecenter img {
+    transition: transform 0.4s ease;
+}
+
+/* Animation de retournement */
+#gamecenter button img:active {
+    transform: rotateY(180deg);
+}
+
+/* Timer et coups */
+#timer,
+#coups {
+    font-size: 1.2rem;
+    margin: 1rem;
+    background: #eaffea;
+    padding: 0.5rem 1rem;
+    border: 2px solid #88dd88;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons de fin */
+#playAgain,
+#menu {
+    margin-top: 1rem;
+    padding: 0.8em 1.5em;
+    border: none;
+    border-radius: 10px;
+    background-color: #44bb44;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+#playAgain:hover,
+#menu:hover {
+    transform: scale(1.1);
+    background-color: #339933;
+}
