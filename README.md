@@ -4,7 +4,7 @@ Un petit jeu de mémoire inspiré de l’univers de **Sergent Keroro**, réalis�
 
 ##  Objectif
 
-Trouver toutes les paires de cartes en un minimum de temps ou de coups, selon le niveau de difficulté choisi. À chaque paire trouvée, Keroro te félicite !
+Trouver toutes les paires de cartes en un minimum de temps ou de coups, selon le niveau de difficulté choisi.
 
 ---
 
@@ -20,7 +20,7 @@ Trouver toutes les paires de cartes en un minimum de temps ou de coups, selon le
 3. Si les cartes sont identiques, elles disparaissent ! Sinon, elles se retournent.
 
 4. Le jeu se termine lorsque :
-   - Toutes les paires sont trouvées (victoire 🎉)
+   - Toutes les paires sont trouvées (victoire )
    - Le temps est écoulé (niveau 2)
    - Tu as dépassé les coups autorisés (niveau 3)
 
